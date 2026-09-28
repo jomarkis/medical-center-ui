@@ -1,0 +1,79 @@
+.welcome {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff0000;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+
+  background-image: url('./assets/login_background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.login-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.6rem;
+  color: #9b2121;
+  font-weight: 700;
+}
+
+.login-subtitle {
+  margin: 0 0 1.8rem 0;
+  font-size: 0.95rem;
+  color: #718096;
+}
+
+/* Τα κουμπιά επιλογής */
+.role-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-role {
+  padding: 0.85rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.btn-role:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.btn-patient {
+  background-color: #2b6cb0;
+}
+
+.btn-doctor {
+  background-color: #2c7a7b;
+}
+
+.btn-admin {
+  background-color: #4a5568;
+}
