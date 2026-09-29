@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import './Login.css'
 
-function Login() {
+interface LoginProps {
+  onSelectRole: (role: 'PATIENT' | 'DOCTOR' | 'ADMIN') => void;
+}
+
+function Login({ onSelectRole }: LoginProps) {
     return (
       <div className="login-container">
       <div className="login-card">
@@ -10,17 +14,20 @@ function Login() {
 
         <div className="role-buttons">
           <button 
-            className="btn-role btn-patient"          >
+            className="btn-role btn-patient"
+            onClick={() => onSelectRole('PATIENT')}       >
             👤 Login as Patient
           </button>
 
           <button 
-            className="btn-role btn-doctor"          >
+            className="btn-role btn-doctor"          
+            onClick={() => onSelectRole('DOCTOR')}>
             🩺 Login as Doctor
           </button>
 
           <button 
-            className="btn-role btn-admin"          >
+            className="btn-role btn-admin"          
+            onClick={() => onSelectRole('ADMIN')}>
             ⚙️ Login as Admin
           </button>
         </div>
