@@ -27,7 +27,7 @@ function App() {
   };
 
   if (activeRole === "ROLE_ADMIN") {
-    return <AdminPage onLogout={handleLogout} />;
+    return <AdminPage onLogout={handleLogout} activeAction={null} />;
   }
   if (activeRole === "ROLE_DOCTOR") {
     return <DoctorPage onLogout={handleLogout} />;

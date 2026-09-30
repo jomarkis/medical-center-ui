@@ -1,0 +1,98 @@
+.action-list-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+
+.action-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.action-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #edf2f7;
+  position: relative;
+}
+
+.action-list-row:last-child {
+  border-bottom: none;
+}
+
+.action-item-label {
+  font-size: 1.05rem;
+  color: #1a202c;
+  font-weight: 500;
+}
+
+/* Κουμπί με τις 3 τελείες */
+.action-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.btn-dots {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 50%;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-dots:hover {
+  background-color: #edf2f7;
+  color: #1a202c;
+}
+
+/* Dropdown Menu */
+.action-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.35rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  background: transparent;
+  border: none;
+  padding: 0.65rem 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #2d3748;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f7fafc;
+}
+
+.dropdown-item.delete {
+  color: #e53e3e;
+}
+
+.dropdown-item.delete:hover {
+  background-color: #fff5f5;
+}
