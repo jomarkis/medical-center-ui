@@ -1,36 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Login.css";
+import type {
+  LoginRequest,
+  AdminLoginRequest,
+  DoctorLoginRequest,
+  PatientLoginRequest,
+  LoginResponse,
+} from '../../types/auth';
 
 interface Login2Props {
   role: "PATIENT" | "DOCTOR" | "ADMIN";
   onBack: () => void;
   onSumbitSuccess: () => void;
-}
-
-export interface LoginRequest {
-  role: "ADMIN" | "DOCTOR" | "PATIENT";
-}
-
-export interface AdminLoginRequest extends LoginRequest {
-  role: "ADMIN";
-  pin: string;
-}
-
-export interface DoctorLoginRequest extends LoginRequest {
-  role: "DOCTOR";
-  doctorID: number;
-}
-
-export interface PatientLoginRequest extends LoginRequest {
-  role: "PATIENT";
-  patientID: number;
-}
-
-export interface LoginResponse {
-  token: string;
-  role: "ROLE_ADMIN" | "ROLE_DOCTOR" | "ROLE_PATIENT" | string;
-  identifier: number;
 }
 
 function Login2({ role, onBack, onSumbitSuccess }: Login2Props) {
@@ -90,9 +72,9 @@ function Login2({ role, onBack, onSumbitSuccess }: Login2Props) {
       onSumbitSuccess();
     } catch (err: any) {
       if (err.response && err.response.data) {
-        setLoginMessage(err.response.data.message || "Αποτυχία ταυτοποίησης.");
+        setLoginMessage(err.response.data.message || "Failed to login. Please try again.");
       } else {
-        setLoginMessage("Δεν είναι δυνατή η σύνδεση με τον διακομιστή.");
+        setLoginMessage("No response from server.");
       }
     }
   };

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./App.css";
-import Login from "./Login";
-import Login2 from "./Login2";
-import AdminPage from "./AdminPage";
-import PatientPage from "./PatientPage";
-import DoctorPage from "./DoctorPage";
+import Login from "./pages/auth/Login";
+import Login2 from "./pages/auth/Login2";
+import AdminPage from "./pages/dashboards/AdminPage";
+import PatientPage from "./pages/dashboards/PatientPage";
+import DoctorPage from "./pages/dashboards/DoctorPage";
 
 function App() {
   const [selectedRole, setSelectedRole] = useState<
