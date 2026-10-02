@@ -3,6 +3,7 @@ import "./PatientsTable.css";
 
 export interface PatientRecord {
   patientID: string;
+  patientName: string;
   patientPhone: string;
   email: string;
 }
@@ -18,6 +19,7 @@ export default function PatientsTable({ patients }: PatientsTableProps) {
         <thead>
           <tr>
             <th className="align-left">Patient ID</th>
+            <th className="align-left">Patient Name</th>
             <th className="align-left">Patient Phone</th>
             <th className="align-right">Email</th>
           </tr>
@@ -26,7 +28,7 @@ export default function PatientsTable({ patients }: PatientsTableProps) {
           {patients.length === 0 ? (
             <tr>
               <td colSpan={3} className="empty-table-cell">
-                Δεν υπάρχουν καταχωρημένοι ασθενείς.
+                No patients found.
               </td>
             </tr>
           ) : (
@@ -35,6 +37,7 @@ export default function PatientsTable({ patients }: PatientsTableProps) {
                 <td className="patient-id-cell align-left">
                   {patient.patientID}
                 </td>
+                <td className="align-left">{patient.patientName}</td>
                 <td className="align-left">{patient.patientPhone}</td>
                 <td className="align-right email-cell">{patient.email}</td>
               </tr>

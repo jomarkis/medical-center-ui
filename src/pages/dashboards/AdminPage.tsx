@@ -1,100 +1,48 @@
 import Header from "../../components/Header";
 import ActionList from "../../components/ActionList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PatientsTable, {
   type PatientRecord,
 } from "../../components/Tables/PatientsTable";
+import axios from "axios";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
   action: "view" | "create" | "delete";
 }
-
-const mockPatients: PatientRecord[] = [
-  {
-    patientID: "PAT001",
-    patientPhone: "6981234567",
-    email: "george@example.com",
-  },
-  {
-    patientID: "PAT002",
-    patientPhone: "6972345678",
-    email: "maria@example.com",
-  },
-  {
-    patientID: "PAT003",
-    patientPhone: "6943456789",
-    email: "nikos@example.com",
-  },
-  {
-    patientID: "PAT004",
-    patientPhone: "6934567890",
-    email: "eleni@example.com",
-  },
-  {
-    patientID: "PAT001",
-    patientPhone: "6981234567",
-    email: "george@example.com",
-  },
-  {
-    patientID: "PAT002",
-    patientPhone: "6972345678",
-    email: "maria@example.com",
-  },
-  {
-    patientID: "PAT003",
-    patientPhone: "6943456789",
-    email: "nikos@example.com",
-  },
-  {
-    patientID: "PAT004",
-    patientPhone: "6934567890",
-    email: "eleni@example.com",
-  },
-  {
-    patientID: "PAT001",
-    patientPhone: "6981234567",
-    email: "george@example.com",
-  },
-  {
-    patientID: "PAT002",
-    patientPhone: "6972345678",
-    email: "maria@example.com",
-  },
-  {
-    patientID: "PAT003",
-    patientPhone: "6943456789",
-    email: "nikos@example.com",
-  },
-  {
-    patientID: "PAT004",
-    patientPhone: "6934567890",
-    email: "eleni@example.com",
-  },
-  {
-    patientID: "PAT001",
-    patientPhone: "6981234567",
-    email: "george@example.com",
-  },
-  {
-    patientID: "PAT002",
-    patientPhone: "6972345678",
-    email: "maria@example.com",
-  },
-  {
-    patientID: "PAT003",
-    patientPhone: "6943456789",
-    email: "nikos@example.com",
-  },
-  {
-    patientID: "PAT004",
-    patientPhone: "6934567890",
-    email: "eleni@example.com",
-  },
-];
 //
 function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [activeAction, setActiveAction] = useState<listAction | null>(null);
+
+  const [patients, setPatients] = useState<PatientRecord[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeAction?.type === "Patients" && activeAction?.action === "view") {
+      const fetchPatients = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get<PatientRecord[]>(
+            "http://localhost:8081/api/patients",
+            {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            },
+          );
+          setPatients(response.data);
+        } catch (err) {
+          console.error("Σφάλμα κατά την ανάκτηση των ασθενών:", err);
+          setError("Αποτυχία φόρτωσης δεδομένων ασθενών.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPatients();
+    }
+  }, [activeAction]);
 
   return (
     <div>
@@ -132,29 +80,23 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
                 border: "1px solid #ccc",
               }}
             >
-              ← Πίσω στο Admin Dashboard
+              ← Back to AdminDashboard
             </button>
-            <h2>
-              {activeAction.action.toUpperCase()} - {activeAction.type}
-            </h2>
             {activeAction.type === "Patients" &&
             activeAction.action === "view" ? (
               <div>
-                <h2 style={{ marginBottom: "1rem" }}>Λίστα Ασθενών</h2>
-                <PatientsTable patients={mockPatients} />
+                <h2 style={{ marginBottom: "1rem" }}>Patients Table</h2>
+                {loading && <p>Loading patients...</p>}
+                {error && <p style={{ color: "#e53e3e" }}>{error}</p>}
+                {!loading && !error && <PatientsTable patients={patients} />}
               </div>
             ) : (
               <div>
                 <h2>
                   {activeAction.action.toUpperCase()} - {activeAction.type}
                 </h2>
-                <p>Εδώ θα εμφανιστεί η αντίστοιχη οθόνη.</p>
               </div>
             )}
-            <p>
-              Εδώ εμφανίζεται το περιεχόμενο για {activeAction.type} (
-              {activeAction.action}).
-            </p>
           </div>
         )}
       </main>
@@ -163,3 +105,4 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 }
 
 export default AdminPage;
+//
