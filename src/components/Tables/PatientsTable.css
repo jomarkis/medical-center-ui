@@ -1,0 +1,80 @@
+/* Container κάρτας πίνακα */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+/* Κύριος Πίνακας */
+.custom-dark-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* Επικεφαλίδα πίνακα */
+.custom-dark-table thead tr {
+  background-color: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.custom-dark-table th {
+  padding: 0.9rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Γραμμές και κελιά */
+.custom-dark-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+}
+
+.custom-dark-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.custom-dark-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.custom-dark-table td {
+  padding: 1rem 1.25rem;
+  color: #334155;
+}
+
+/* Στήλη Patient ID */
+.patient-id-cell {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Στήλη Email */
+.email-cell {
+  color: #475569;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.align-right {
+  text-align: right;
+}
+
+/* Empty State */
+.empty-table-cell {
+  text-align: center;
+  color: #94a3b8;
+  padding: 2.5rem 1rem;
+}

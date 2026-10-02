@@ -1,20 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ActionList.css";
 
+export type ActionType =
+  | "Doctors"
+  | "Patients"
+  | "Appointments"
+  | "Exams"
+  | "Statistics";
+
 export interface ActionListItem {
-  type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
+  type: ActionType;
 }
 
 interface listAction {
-  type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
+  type: ActionType;
   action: "view" | "create" | "delete";
 }
 
 interface ActionListProps {
   items: ActionListItem[];
-  onView?: (id: string | number) => void;
-  onCreate?: (id: string | number) => void;
-  onDelete?: (id: string | number) => void;
+  onView?: (type: ActionType) => void;
+  onCreate?: (type: ActionType) => void;
+  onDelete?: (type: ActionType) => void;
 }
 
 export default function ActionList({
@@ -74,11 +81,8 @@ export default function ActionList({
                   <button
                     className="dropdown-item"
                     onClick={() => {
-                      onView && onView(item.type);
+                      onView?.(item.type);
                       setOpenMenuId(null);
-                      localStorage.setItem("selectedType", item.type);
-                      localStorage.setItem("selectedAction", "View");
-                      setActiveAction({ type: item.type, action: "view" });
                     }}
                   >
                     View
@@ -88,11 +92,8 @@ export default function ActionList({
                     <button
                       className="dropdown-item"
                       onClick={() => {
-                        onCreate && onCreate(item.type);
+                        onCreate?.(item.type);
                         setOpenMenuId(null);
-                        localStorage.setItem("selectedType", item.type);
-                        localStorage.setItem("selectedAction", "create");
-                        setActiveAction({ type: item.type, action: "create" });
                       }}
                     >
                       Create
@@ -104,11 +105,8 @@ export default function ActionList({
                     <button
                       className="dropdown-item delete"
                       onClick={() => {
-                        onDelete && onDelete(item.type);
+                        onDelete?.(item.type);
                         setOpenMenuId(null);
-                        localStorage.setItem("selectedType", item.type);
-                        localStorage.setItem("selectedAction", "delete");
-                        setActiveAction({ type: item.type, action: "delete" });
                       }}
                     >
                       Delete
