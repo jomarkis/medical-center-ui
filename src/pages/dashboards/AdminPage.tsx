@@ -1,9 +1,16 @@
 import Header from "../../components/Header";
 import ActionList from "../../components/ActionList";
 import { useEffect, useState } from "react";
+
 import PatientsTable, {
   type PatientRecord,
 } from "../../components/Tables/PatientsTable";
+
+import CreatePatientMenuProps, {
+  type CreatePatientData,
+} from "../../components/CreateMenus/CreatePatientMenu";
+import CreatePatientMenu from "../../components/CreateMenus/CreatePatientMenu";
+
 import axios from "axios";
 
 interface listAction {
@@ -17,6 +24,9 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [patients, setPatients] = useState<PatientRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
     if (activeAction?.type === "Patients" && activeAction?.action === "view") {
@@ -33,8 +43,8 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           );
           setPatients(response.data);
         } catch (err) {
-          console.error("Σφάλμα κατά την ανάκτηση των ασθενών:", err);
-          setError("Αποτυχία φόρτωσης δεδομένων ασθενών.");
+          console.error("Error fetching patients:", err);
+          setError("Failed to load patient data.");
         } finally {
           setLoading(false);
         }
@@ -43,6 +53,69 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       fetchPatients();
     }
   }, [activeAction]);
+
+  const handleCreatePatient = async (data: CreatePatientData) => {
+    setIsSubmitting(true);
+    setCreateError(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:8081/api/patients",
+        {
+          patientName: data.patientName,
+          patientPhone: data.patientPhone,
+          email: data.patientEmail,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+
+      // Μετά την επιτυχή δημιουργία, τον στέλνουμε αυτόματα στον πίνακα να δει τη λίστα
+      setActiveAction({ type: "Patients", action: "view" });
+    } catch (err) {
+      console.error("Error creating patient:", err);
+      setCreateError("Failed to create patient. Please check the details.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const renderActionContent = () => {
+    if (!activeAction) {
+      return null;
+    }
+
+    if (activeAction.type === "Patients" && activeAction.action === "view") {
+      return (
+        <div>
+          <h2 style={{ marginBottom: "1rem" }}>Patients Table</h2>
+          {loading && <p>Loading patients...</p>}
+          {error && <p style={{ color: "#e53e3e" }}>{error}</p>}
+          {!loading && !error && <PatientsTable patients={patients} />}
+        </div>
+      );
+    }
+    if (activeAction.type === "Patients" && activeAction.action === "create") {
+      return (
+        <CreatePatientMenu
+          onSubmit={handleCreatePatient}
+          onCancel={() => setActiveAction(null)}
+          isLoading={isSubmitting}
+          errorMessage={createError}
+        />
+      );
+    }
+
+    return (
+      <div>
+        <h2>
+          {activeAction.action.toUpperCase()} - {activeAction.type}
+        </h2>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -82,21 +155,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             >
               ← Back to AdminDashboard
             </button>
-            {activeAction.type === "Patients" &&
-            activeAction.action === "view" ? (
-              <div>
-                <h2 style={{ marginBottom: "1rem" }}>Patients Table</h2>
-                {loading && <p>Loading patients...</p>}
-                {error && <p style={{ color: "#e53e3e" }}>{error}</p>}
-                {!loading && !error && <PatientsTable patients={patients} />}
-              </div>
-            ) : (
-              <div>
-                <h2>
-                  {activeAction.action.toUpperCase()} - {activeAction.type}
-                </h2>
-              </div>
-            )}
+            {renderActionContent()}
           </div>
         )}
       </main>
