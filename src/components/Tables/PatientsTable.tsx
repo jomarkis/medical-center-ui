@@ -1,5 +1,5 @@
 import React from "react";
-import "./PatientsTable.css";
+import "./Table.css";
 
 export interface PatientRecord {
   patientID: string;

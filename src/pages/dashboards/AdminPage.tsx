@@ -6,12 +6,20 @@ import PatientsTable, {
   type PatientRecord,
 } from "../../components/Tables/PatientsTable";
 
+import Doctors, {
+  type DoctorRecord,
+} from "../../components/Tables/DoctorsTable";
+
 import CreatePatientMenuProps, {
   type CreatePatientData,
 } from "../../components/CreateMenus/CreatePatientMenu";
 import CreatePatientMenu from "../../components/CreateMenus/CreatePatientMenu";
 
 import axios from "axios";
+import DoctorsTable from "../../components/Tables/DoctorsTable";
+import CreateDoctorMenu, {
+  type CreateDoctorData,
+} from "../../components/CreateMenus/CreateDoctorMenu";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
@@ -24,6 +32,8 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [patients, setPatients] = useState<PatientRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [doctors, setDoctors] = useState<DoctorRecord[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -52,6 +62,29 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 
       fetchPatients();
     }
+    if (activeAction?.type === "Doctors" && activeAction?.action === "view") {
+      const fetchDoctors = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get<DoctorRecord[]>(
+            "http://localhost:8081/api/doctors",
+            {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            },
+          );
+          setDoctors(response.data);
+        } catch (err) {
+          console.error("Error fetching doctors:", err);
+          setError("Failed to load doctor data.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchDoctors();
+    }
   }, [activeAction]);
 
   const handleCreatePatient = async (data: CreatePatientData) => {
@@ -72,11 +105,38 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
         },
       );
 
-      // Μετά την επιτυχή δημιουργία, τον στέλνουμε αυτόματα στον πίνακα να δει τη λίστα
       setActiveAction({ type: "Patients", action: "view" });
     } catch (err) {
       console.error("Error creating patient:", err);
       setCreateError("Failed to create patient. Please check the details.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCreateDoctor = async (data: CreateDoctorData) => {
+    setIsSubmitting(true);
+    setCreateError(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:8081/api/doctors",
+        {
+          doctorName: data.doctorName,
+          doctorPhone: data.doctorPhone,
+          specialty: data.specialty,
+          years: data.years,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+
+      setActiveAction({ type: "Doctors", action: "view" });
+    } catch (err) {
+      console.error("Error creating Doctor:", err);
+      setCreateError("Failed to create doctor. Please check the details.");
     } finally {
       setIsSubmitting(false);
     }
@@ -108,13 +168,27 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       );
     }
 
-    return (
-      <div>
-        <h2>
-          {activeAction.action.toUpperCase()} - {activeAction.type}
-        </h2>
-      </div>
-    );
+    if (activeAction.type === "Doctors" && activeAction.action === "view") {
+      return (
+        <div>
+          <h2 style={{ marginBottom: "1rem" }}>Doctors Table</h2>
+          {loading && <p>Loading doctors...</p>}
+          {error && <p style={{ color: "#e53e3e" }}>{error}</p>}
+          {!loading && !error && <DoctorsTable doctors={doctors} />}
+        </div>
+      );
+    }
+
+    if (activeAction.type === "Doctors" && activeAction.action === "create") {
+      return (
+        <CreateDoctorMenu
+          onSubmit={handleCreateDoctor}
+          onCancel={() => setActiveAction(null)}
+          isLoading={isSubmitting}
+          errorMessage={createError}
+        />
+      );
+    }
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./CreatePatientMenu.css";
+import "./CreateMenu.css";
 
 export interface CreatePatientData {
   patientName: string;
@@ -55,12 +55,12 @@ export default function CreatePatientMenu({
   const activeError = validationError || errorMessage;
 
   return (
-    <div className="create-patient-card">
-      <h3 className="create-patient-title">Register New Patient</h3>
+    <div className="create-card">
+      <h3 className="create-title">Register New Patient</h3>
 
       {activeError && <div className="form-alert error">{activeError}</div>}
 
-      <form onSubmit={handleSubmit} className="create-patient-form">
+      <form onSubmit={handleSubmit} className="create-form">
         <div className="form-group">
           <label htmlFor="patientName">Full Name</label>
           <input
