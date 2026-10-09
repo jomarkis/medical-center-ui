@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./CreateMenu.css";
+
 export interface CreateDoctorData {
   doctorName: string;
   doctorPhone: string;

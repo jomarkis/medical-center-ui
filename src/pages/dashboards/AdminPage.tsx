@@ -10,6 +10,10 @@ import Doctors, {
   type DoctorRecord,
 } from "../../components/Tables/DoctorsTable";
 
+import ExamTable, { type ExamRecord } from "../../components/Tables/ExamsTable";
+
+import ExamsTable from "../../components/Tables/ExamsTable";
+
 import CreatePatientMenuProps, {
   type CreatePatientData,
 } from "../../components/CreateMenus/CreatePatientMenu";
@@ -20,6 +24,9 @@ import DoctorsTable from "../../components/Tables/DoctorsTable";
 import CreateDoctorMenu, {
   type CreateDoctorData,
 } from "../../components/CreateMenus/CreateDoctorMenu";
+import ExamsFilter, {
+  type ExamFilters,
+} from "../../components/Filters/ExamFilter";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
@@ -37,6 +44,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+
+  const [filterError, setFilterError] = useState<string | null>(null);
+
+  const [exams, setExams] = useState<ExamRecord[]>([]);
 
   useEffect(() => {
     if (activeAction?.type === "Patients" && activeAction?.action === "view") {
@@ -142,6 +153,40 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
     }
   };
 
+  const handleExamFilter = async (data: ExamFilters) => {
+    setIsSubmitting(true);
+    setFilterError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get<ExamRecord[]>(
+        "http://localhost:8081/api/exams",
+        {
+          params: { doctorID: data.doctorID || null },
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+      setExams(response.data);
+    } catch (err) {
+      console.error("Error searching exams:", err);
+      // Έλεγχος αν το σφάλμα προέρχεται από την απόκριση του Axios
+      if (axios.isAxiosError(err) && err.response) {
+        if (typeof err.response.data === "string") {
+          setFilterError(err.response.data);
+        } else if (err.response.data?.message) {
+          setFilterError(err.response.data.message);
+        } else {
+          setFilterError(
+            `Error ${err.response.status}: Failed to fetch exams.`,
+          );
+        }
+      } else {
+        setFilterError("Could not connect to the server. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const renderActionContent = () => {
     if (!activeAction) {
       return null;
@@ -187,6 +232,26 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           isLoading={isSubmitting}
           errorMessage={createError}
         />
+      );
+    }
+
+    if (activeAction.type === "Exams" && activeAction.action === "view") {
+      return (
+        <div>
+          <ExamsFilter
+            onSubmit={handleExamFilter}
+            onCancel={() => setActiveAction(null)}
+            isLoading={isSubmitting}
+            errorMessage={filterError}
+          />
+
+          <div style={{ marginTop: "2rem" }}>
+            <h2 style={{ marginBottom: "1rem" }}>Exams List</h2>
+            {isSubmitting && <p>Searching exams...</p>}
+            {filterError && <p style={{ color: "#e53e3e" }}>{filterError}</p>}
+            {!isSubmitting && <ExamTable exams={exams} />}
+          </div>
+        </div>
       );
     }
   };
@@ -238,4 +303,6 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 }
 
 export default AdminPage;
+//
+
 //
