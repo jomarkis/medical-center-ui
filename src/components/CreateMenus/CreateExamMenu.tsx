@@ -74,6 +74,68 @@ export default function CreateExamMenu({
 
   const activeError = validationError || errorMessage;
 
+  const [activeType, setActiveType] = useState<string>("");
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      examType: value,
+    }));
+    setActiveType(value);
+  };
+
+  const renderTypeExtraForm = () => {
+    if (formData.examType === "IMAGING") {
+      return (
+        <div className="form-group">
+          <label htmlFor="machineType">Machine Type</label>
+          <input
+            type="text"
+            id="machineType"
+            name="machineType"
+            placeholder="e.g. MRI"
+            value={(formData as CreateIMAGINGExamData).machineType || ""}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+        </div>
+      );
+    }
+    if (formData.examType === "MICROBIOLOGICAL") {
+      return (
+        <div className="form-group">
+          <label htmlFor="sampleType">Sample Type</label>
+          <input
+            type="text"
+            id="sampleType"
+            name="sampleType"
+            placeholder="e.g. Blood"
+            value={(formData as CreateMICROBIOLOGICALExamData).sampleType || ""}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+        </div>
+      );
+    }
+    if (formData.examType === "SPECIALIZED") {
+      return (
+        <div className="form-group">
+          <label htmlFor="examSpecialty">Exam Specialty</label>
+          <input
+            type="text"
+            id="examSpecialty"
+            name="examSpecialty"
+            placeholder="e.g. Cardiology"
+            value={(formData as CreateSPECIALIZEDExamData).examSpecialty || ""}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="create-card">
       <h3 className="create-title">Register New Exam</h3>
@@ -153,6 +215,7 @@ export default function CreateExamMenu({
             name="examType"
             className="form-select"
             defaultValue=""
+            onChange={handleTypeChange}
           >
             <option value="" disabled>
               Select type
@@ -162,7 +225,7 @@ export default function CreateExamMenu({
             <option value="SPECIALIZED">SPECIALIZED</option>
           </select>
         </div>
-
+        {activeType !== "" && renderTypeExtraForm()}
         <div className="form-actions">
           <button
             type="button"

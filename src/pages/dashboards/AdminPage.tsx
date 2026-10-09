@@ -27,6 +27,12 @@ import CreateDoctorMenu, {
 import ExamsFilter, {
   type ExamFilters,
 } from "../../components/Filters/ExamFilter";
+import type {
+  CreateIMAGINGExamData,
+  CreateMICROBIOLOGICALExamData,
+  CreateSPECIALIZEDExamData,
+} from "../../components/CreateMenus/CreateExamMenu";
+import CreateExamMenu from "../../components/CreateMenus/CreateExamMenu";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
@@ -95,6 +101,24 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       };
 
       fetchDoctors();
+    }
+    if (activeAction?.type === "Exams" && activeAction?.action === "view") {
+      const loadAllExams = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get<ExamRecord[]>(
+            "http://localhost:8081/api/exams",
+            {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            },
+          );
+          setExams(response.data);
+        } catch (err) {
+          console.error("Error loading exams:", err);
+        }
+      };
+
+      loadAllExams();
     }
   }, [activeAction]);
 
@@ -187,6 +211,39 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
     }
   };
 
+  const handleExamCreate = async (data: any) => {
+    setIsSubmitting(true);
+    setCreateError(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:8081/api/exams",
+        {
+          examName: data.examName,
+          examCategory: data.examCategory,
+          maxSlotsPerDay: data.maxSlotsPerDay,
+          cost: data.cost,
+          doctorID: data.doctorID,
+          examType: data.examType,
+          sampleType: (data as CreateMICROBIOLOGICALExamData).sampleType,
+          examSpecialty: (data as CreateSPECIALIZEDExamData).examSpecialty,
+          machineType: (data as CreateIMAGINGExamData).machineType,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+
+      setActiveAction({ type: "Exams", action: "view" });
+    } catch (err) {
+      console.error("Error creating Exam:", err);
+      setCreateError("Failed to create exam. Please check the details.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const renderActionContent = () => {
     if (!activeAction) {
       return null;
@@ -248,10 +305,24 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           <div style={{ marginTop: "2rem" }}>
             <h2 style={{ marginBottom: "1rem" }}>Exams List</h2>
             {isSubmitting && <p>Searching exams...</p>}
-            {filterError && <p style={{ color: "#e53e3e" }}>{filterError}</p>}
-            {!isSubmitting && <ExamTable exams={exams} />}
+            {filterError && (
+              <p style={{ color: "#e53e3e" }}>
+                Please check the filter criteria.
+              </p>
+            )}
+            {!isSubmitting && !filterError && <ExamTable exams={exams} />}
           </div>
         </div>
+      );
+    }
+    if (activeAction.type === "Exams" && activeAction.action === "create") {
+      return (
+        <CreateExamMenu
+          onSubmit={handleExamCreate}
+          onCancel={() => setActiveAction(null)}
+          isLoading={isSubmitting}
+          errorMessage={createError}
+        />
       );
     }
   };
