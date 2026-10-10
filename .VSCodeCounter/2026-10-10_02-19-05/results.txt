@@ -1,0 +1,82 @@
+Date : 2026-10-10 02:19:05
+Directory : d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui
+Total : 37 files,  5413 codes, 42 comments, 316 blanks, all 5771 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          4 |      3,170 |          4 |          8 |      3,182 |
+| TypeScript JSX     |         18 |      1,445 |         20 |        180 |      1,645 |
+| PostCSS            |          7 |        644 |         17 |        102 |        763 |
+| Markdown           |          1 |         63 |          0 |         15 |         78 |
+| XML                |          2 |         25 |          0 |          1 |         26 |
+| TypeScript         |          2 |         25 |          1 |          6 |         32 |
+| JavaScript         |          1 |         21 |          0 |          2 |         23 |
+| HTML               |          1 |         13 |          0 |          1 |         14 |
+| JSON with Comments |          1 |          7 |          0 |          1 |          8 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                         | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                            |         37 |      5,413 |         42 |        316 |      5,771 |
+| . (Files)                                                                                                    |          9 |      3,279 |          5 |         29 |      3,313 |
+| public                                                                                                       |          2 |         25 |          0 |          1 |         26 |
+| src                                                                                                          |         26 |      2,109 |         37 |        286 |      2,432 |
+| src (Files)                                                                                                  |          4 |        267 |          4 |         44 |        315 |
+| src\components                                                                                               |         15 |      1,204 |         20 |        162 |      1,386 |
+| src\components (Files)                                                                                       |          4 |        292 |          9 |         37 |        338 |
+| src\components\CreateMenus                                                                                   |          4 |        584 |          4 |         84 |        672 |
+| src\components\Filters                                                                                       |          3 |         63 |          0 |         12 |         75 |
+| src\components\Tables                                                                                        |          4 |        265 |          7 |         29 |        301 |
+| src\pages                                                                                                    |          6 |        618 |         13 |         76 |        707 |
+| src\pages\auth                                                                                               |          3 |        254 |          8 |         36 |        298 |
+| src\pages\dashboards                                                                                         |          3 |        364 |          5 |         40 |        409 |
+| src\types                                                                                                    |          1 |         20 |          0 |          4 |         24 |
++--------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                     | language           | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\README.md                                        | Markdown           |         63 |          0 |         15 |         78 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\eslint.config.js                                 | JavaScript         |         21 |          0 |          2 |         23 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\index.html                                       | HTML               |         13 |          0 |          1 |         14 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\package-lock.json                                | JSON               |      3,098 |          0 |          1 |      3,099 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\package.json                                     | JSON               |         31 |          0 |          1 |         32 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\public\favicon.svg                               | XML                |          1 |          0 |          0 |          1 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\public\icons.svg                                 | XML                |         24 |          0 |          1 |         25 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\App.css                                      | PostCSS            |        194 |          4 |         31 |        229 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\App.tsx                                      | TypeScript JSX     |         44 |          0 |          9 |         53 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\ActionList.css                    | PostCSS            |         84 |          2 |         12 |         98 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\ActionList.tsx                    | TypeScript JSX     |        107 |          4 |         13 |        124 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\CreateMenus\CreateDoctorMenu.tsx  | TypeScript JSX     |        119 |          2 |         19 |        140 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\CreateMenus\CreateExamMenu.tsx    | TypeScript JSX     |        223 |          1 |         25 |        249 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\CreateMenus\CreateMenu.css        | PostCSS            |        138 |          0 |         22 |        160 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\CreateMenus\CreatePatientMenu.tsx | TypeScript JSX     |        104 |          1 |         18 |        123 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Filters\AppointmentFilter.tsx     | TypeScript JSX     |          0 |          0 |          1 |          1 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Filters\ExamFilter.tsx            | TypeScript JSX     |         63 |          0 |         10 |         73 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Filters\StatisticsFilter.tsx      | TypeScript JSX     |          0 |          0 |          1 |          1 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Header.css                        | PostCSS            |         64 |          3 |          8 |         75 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Header.tsx                        | TypeScript JSX     |         37 |          0 |          4 |         41 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Tables\DoctorsTable.tsx           | TypeScript JSX     |         48 |          0 |          4 |         52 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Tables\ExamsTable.tsx             | TypeScript JSX     |        109 |          0 |          8 |        117 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Tables\PatientsTable.tsx          | TypeScript JSX     |         47 |          0 |          4 |         51 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\components\Tables\Table.css                  | PostCSS            |         61 |          7 |         13 |         81 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\index.css                                    | PostCSS            |         20 |          0 |          2 |         22 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\main.tsx                                     | TypeScript JSX     |          9 |          0 |          2 |         11 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\pages\auth\Login.css                         | PostCSS            |         83 |          1 |         14 |         98 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\pages\auth\Login.tsx                         | TypeScript JSX     |         36 |          0 |          6 |         42 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\pages\auth\Login2.tsx                        | TypeScript JSX     |        135 |          7 |         16 |        158 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\pages\dashboards\AdminPage.tsx               | TypeScript JSX     |        340 |          4 |         36 |        380 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\pages\dashboards\DoctorPage.tsx              | TypeScript JSX     |         12 |          1 |          2 |         15 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\pages\dashboards\PatientPage.tsx             | TypeScript JSX     |         12 |          0 |          2 |         14 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\src\types\auth.ts                                | TypeScript         |         20 |          0 |          4 |         24 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\tsconfig.app.json                                | JSON               |         22 |          2 |          3 |         27 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\tsconfig.json                                    | JSON with Comments |          7 |          0 |          1 |          8 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\tsconfig.node.json                               | JSON               |         19 |          2 |          3 |         24 |
+| d:\Jomarkakis's PC\Programming\SpringBoot\medical-center-ui\vite.config.ts                                   | TypeScript         |          5 |          1 |          2 |          8 |
+| Total                                                                                                        |                    |      5,413 |         42 |        316 |      5,771 |
++--------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

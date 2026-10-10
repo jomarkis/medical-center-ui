@@ -36,6 +36,8 @@ import CreateExamMenu from "../../components/CreateMenus/CreateExamMenu";
 import AppointmentFilter, {
   type AppointmentFilters,
 } from "../../components/Filters/AppointmentFilter";
+import type { AppointmentRecord } from "../../components/Tables/AppointmentsTable";
+import AppointmentsTable from "../../components/Tables/AppointmentsTable";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
@@ -57,6 +59,8 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [filterError, setFilterError] = useState<string | null>(null);
 
   const [exams, setExams] = useState<ExamRecord[]>([]);
+
+  const [appointments, setAppointments] = useState<AppointmentRecord[]>([]);
 
   useEffect(() => {
     if (activeAction?.type === "Patients" && activeAction?.action === "view") {
@@ -231,7 +235,6 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   };
 
   const handleAppointmentFilter = async (data: AppointmentFilters) => {
-    /*
     setIsSubmitting(true);
     setFilterError(null);
     try {
@@ -239,20 +242,24 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       const response = await axios.get<AppointmentRecord[]>(
         "http://localhost:8081/api/appointments",
         {
-          params: { doctorID: data.doctorID || null },
+          params: {
+            examID: data.examID || null,
+            patientID: data.patientID || null,
+            doctorID: data.doctorID || null,
+            appointmentDate: data.date || null,
+          },
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
-      setExams(response.data);
+      setAppointments(response.data);
     } catch (err) {
       if (!handleError(err, setFilterError)()) {
-        console.error("Error filtering exams:", err);
-        setFilterError("Failed to fetch exams.");
+        console.error("Error filtering appointments:", err);
+        setFilterError("Failed to fetch appointments.");
       }
     } finally {
       setIsSubmitting(false);
     }
-      */
   };
 
   const handleExamCreate = async (data: any) => {
@@ -383,6 +390,18 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             isLoading={isSubmitting}
             errorMessage={filterError}
           />
+          <div style={{ marginTop: "2rem" }}>
+            <h2 style={{ marginBottom: "1rem" }}>Appointments List</h2>
+            {isSubmitting && <p>Searching appointments...</p>}
+            {filterError && (
+              <p style={{ color: "#e53e3e" }}>
+                Please check the filter criteria.
+              </p>
+            )}
+            {!isSubmitting && !filterError && (
+              <AppointmentsTable appointments={appointments} />
+            )}
+          </div>
         </div>
       );
     }
