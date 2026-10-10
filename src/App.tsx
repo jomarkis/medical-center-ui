@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Login from "./pages/auth/Login";
 import Login2 from "./pages/auth/Login2";
 import AdminPage from "./pages/dashboards/AdminPage";
 import PatientPage from "./pages/dashboards/PatientPage";
 import DoctorPage from "./pages/dashboards/DoctorPage";
+import axios from "axios";
 
 function App() {
   const [selectedRole, setSelectedRole] = useState<
@@ -26,8 +27,26 @@ function App() {
     setSelectedRole(null);
   };
 
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        // Ελέγχουμε απευθείας αν ο χρήστης βρίσκεται ήδη μέσα σε σελίδα
+        if (error.response?.status === 401 && activeRole !== null) {
+          handleLogout();
+        }
+        return Promise.reject(error);
+      },
+    );
+
+    // Καθαρισμός και επανασύνδεση του interceptor όταν αλλάζει το activeRole
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, [activeRole]);
+
   if (activeRole === "ROLE_ADMIN") {
-    return <AdminPage onLogout={handleLogout} activeAction={null} />;
+    return <AdminPage onLogout={handleLogout} />;
   }
   if (activeRole === "ROLE_DOCTOR") {
     return <DoctorPage onLogout={handleLogout} />;

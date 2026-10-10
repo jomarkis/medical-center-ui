@@ -33,6 +33,9 @@ import type {
   CreateSPECIALIZEDExamData,
 } from "../../components/CreateMenus/CreateExamMenu";
 import CreateExamMenu from "../../components/CreateMenus/CreateExamMenu";
+import AppointmentFilter, {
+  type AppointmentFilters,
+} from "../../components/Filters/AppointmentFilter";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
@@ -70,8 +73,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           );
           setPatients(response.data);
         } catch (err) {
-          console.error("Error fetching patients:", err);
-          setError("Failed to load patient data.");
+          if (!handleError(err, setError)()) {
+            console.error("Error fetching patients:", err);
+            setError("Failed to load patient data.");
+          }
         } finally {
           setLoading(false);
         }
@@ -93,8 +98,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           );
           setDoctors(response.data);
         } catch (err) {
-          console.error("Error fetching doctors:", err);
-          setError("Failed to load doctor data.");
+          if (!handleError(err, setError)()) {
+            console.error("Error fetching doctors:", err);
+            setError("Failed to load doctor data.");
+          }
         } finally {
           setLoading(false);
         }
@@ -114,13 +121,32 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           );
           setExams(response.data);
         } catch (err) {
-          console.error("Error loading exams:", err);
+          if (!handleError(err, setError)()) {
+            console.error("Error loading exams:", err);
+          }
         }
       };
 
       loadAllExams();
     }
   }, [activeAction]);
+
+  const handleError =
+    (err: any, setErrorFunc: (error: string | null) => void) => () => {
+      if (axios.isAxiosError(err) && err.response) {
+        if (typeof err.response.data === "string") {
+          setErrorFunc(err.response.data);
+          return true;
+        } else if (err.response.data?.message) {
+          setErrorFunc(err.response.data.message);
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        setErrorFunc("Could not connect to the server. Please try again.");
+      }
+    };
 
   const handleCreatePatient = async (data: CreatePatientData) => {
     setIsSubmitting(true);
@@ -142,8 +168,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 
       setActiveAction({ type: "Patients", action: "view" });
     } catch (err) {
-      console.error("Error creating patient:", err);
-      setCreateError("Failed to create patient. Please check the details.");
+      if (!handleError(err, setCreateError)()) {
+        console.error("Error creating patient:", err);
+        setCreateError("Failed to create patient. Please check the details.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -170,8 +198,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 
       setActiveAction({ type: "Doctors", action: "view" });
     } catch (err) {
-      console.error("Error creating Doctor:", err);
-      setCreateError("Failed to create doctor. Please check the details.");
+      if (!handleError(err, setCreateError)()) {
+        console.error("Error creating doctor:", err);
+        setCreateError("Failed to create doctor. Please check the details.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -191,24 +221,38 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       );
       setExams(response.data);
     } catch (err) {
-      console.error("Error searching exams:", err);
-      // Έλεγχος αν το σφάλμα προέρχεται από την απόκριση του Axios
-      if (axios.isAxiosError(err) && err.response) {
-        if (typeof err.response.data === "string") {
-          setFilterError(err.response.data);
-        } else if (err.response.data?.message) {
-          setFilterError(err.response.data.message);
-        } else {
-          setFilterError(
-            `Error ${err.response.status}: Failed to fetch exams.`,
-          );
-        }
-      } else {
-        setFilterError("Could not connect to the server. Please try again.");
+      if (!handleError(err, setFilterError)()) {
+        console.error("Error filtering exams:", err);
+        setFilterError("Failed to fetch exams.");
       }
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleAppointmentFilter = async (data: AppointmentFilters) => {
+    /*
+    setIsSubmitting(true);
+    setFilterError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get<AppointmentRecord[]>(
+        "http://localhost:8081/api/appointments",
+        {
+          params: { doctorID: data.doctorID || null },
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+      setExams(response.data);
+    } catch (err) {
+      if (!handleError(err, setFilterError)()) {
+        console.error("Error filtering exams:", err);
+        setFilterError("Failed to fetch exams.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+      */
   };
 
   const handleExamCreate = async (data: any) => {
@@ -237,8 +281,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 
       setActiveAction({ type: "Exams", action: "view" });
     } catch (err) {
-      console.error("Error creating Exam:", err);
-      setCreateError("Failed to create exam. Please check the details.");
+      if (!handleError(err, setCreateError)()) {
+        console.error("Error creating exam:", err);
+        setCreateError("Failed to create exam.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -323,6 +369,21 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           isLoading={isSubmitting}
           errorMessage={createError}
         />
+      );
+    }
+    if (
+      activeAction.type === "Appointments" &&
+      activeAction.action === "view"
+    ) {
+      return (
+        <div>
+          <AppointmentFilter
+            onSubmit={handleAppointmentFilter}
+            onCancel={() => setActiveAction(null)}
+            isLoading={isSubmitting}
+            errorMessage={filterError}
+          />
+        </div>
       );
     }
   };
