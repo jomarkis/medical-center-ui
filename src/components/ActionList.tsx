@@ -22,6 +22,10 @@ interface ActionListProps {
   onView?: (type: ActionType) => void;
   onCreate?: (type: ActionType) => void;
   onDelete?: (type: ActionType) => void;
+
+  onViewPatientIncome?: (type: ActionType) => void;
+  onViewExamIncome?: (type: ActionType) => void;
+  onViewCategoryIncome?: (type: ActionType) => void;
 }
 
 export default function ActionList({
@@ -29,6 +33,9 @@ export default function ActionList({
   onView,
   onCreate,
   onDelete,
+  onViewPatientIncome,
+  onViewExamIncome,
+  onViewCategoryIncome,
 }: ActionListProps) {
   const [openMenuId, setOpenMenuId] = useState<string | number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -78,15 +85,17 @@ export default function ActionList({
 
               {openMenuId === item.type && (
                 <div className="action-dropdown">
-                  <button
-                    className="dropdown-item"
-                    onClick={() => {
-                      onView?.(item.type);
-                      setOpenMenuId(null);
-                    }}
-                  >
-                    View
-                  </button>
+                  {item.type !== "Statistics" && (
+                    <button
+                      className="dropdown-item"
+                      onClick={() => {
+                        onView?.(item.type);
+                        setOpenMenuId(null);
+                      }}
+                    >
+                      View
+                    </button>
+                  )}
 
                   {item.type !== "Statistics" && (
                     <button
@@ -110,6 +119,39 @@ export default function ActionList({
                       }}
                     >
                       Delete
+                    </button>
+                  )}
+                  {item.type === "Statistics" && (
+                    <button
+                      className="dropdown-item item"
+                      onClick={() => {
+                        onViewPatientIncome?.(item.type);
+                        setOpenMenuId(null);
+                      }}
+                    >
+                      View Income Per Patient
+                    </button>
+                  )}
+                  {item.type === "Statistics" && (
+                    <button
+                      className="dropdown-item"
+                      onClick={() => {
+                        onViewExamIncome?.(item.type);
+                        setOpenMenuId(null);
+                      }}
+                    >
+                      View Income Per Exam
+                    </button>
+                  )}
+                  {item.type === "Statistics" && (
+                    <button
+                      className="dropdown-item"
+                      onClick={() => {
+                        onViewCategoryIncome?.(item.type);
+                        setOpenMenuId(null);
+                      }}
+                    >
+                      View Income Per Exam Category
                     </button>
                   )}
                 </div>

@@ -44,10 +44,21 @@ import CreateAppointmentMenu, {
 import DeleteAppointmentMenu, {
   type DeleteAppointmentData,
 } from "../../components/DeleteAppointmentMenu";
+import StatisticsTable, {
+  type ΙncomeRecord,
+} from "../../components/Tables/StatisticsTable";
+import type { StatisticsFilters } from "../../components/Filters/StatisticsFilter";
+import StatisticsFilter from "../../components/Filters/StatisticsFilter";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
-  action: "view" | "create" | "delete";
+  action:
+    | "view"
+    | "create"
+    | "delete"
+    | "viewPatientIncome"
+    | "viewExamIncome"
+    | "viewCategoryIncome";
 }
 
 interface SuccessDeleteMessage {
@@ -72,6 +83,8 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [exams, setExams] = useState<ExamRecord[]>([]);
 
   const [appointments, setAppointments] = useState<AppointmentRecord[]>([]);
+
+  const [incomeRecords, setIncomeRecords] = useState<ΙncomeRecord[]>([]);
 
   const [successDeleteMessage, setSuccessDeleteMessage] = useState<
     string | null
@@ -147,6 +160,68 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       };
 
       loadAllExams();
+    }
+    if (
+      activeAction?.type === "Appointments" &&
+      activeAction?.action === "view"
+    ) {
+      const loadAllAppointments = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get<AppointmentRecord[]>(
+            "http://localhost:8081/api/appointments",
+            {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            },
+          );
+          setAppointments(response.data);
+        } catch (err) {
+          if (!handleError(err, setError)()) {
+            console.error("Error loading appointments:", err);
+          }
+        }
+      };
+      loadAllAppointments();
+    }
+    if (
+      activeAction?.type === "Statistics" &&
+      (activeAction.action === "viewPatientIncome" ||
+        activeAction.action === "viewExamIncome" ||
+        activeAction.action === "viewCategoryIncome")
+    ) {
+      const loadAllPatientStatistics = async () => {
+        var call = "";
+        if (activeAction?.action === "viewPatientIncome") {
+          call = "patient-income";
+        }
+        if (activeAction?.action === "viewExamIncome") {
+          call = "exam-income";
+        }
+        if (activeAction?.action === "viewCategoryIncome") {
+          call = "category-income";
+        }
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get<ΙncomeRecord[]>(
+            `http://localhost:8081/api/stats/${call}`,
+            {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            },
+          );
+          if (response.data.length > 0) {
+            localStorage.setItem(
+              "max",
+              response.data[0].totalIncome.toString(),
+            );
+          }
+          setIncomeRecords(response.data);
+        } catch (err) {
+          if (!handleError(err, setError)()) {
+            console.error("Error loading statistics:", err);
+          }
+        }
+      };
+      loadAllPatientStatistics();
     }
   }, [activeAction]);
 
@@ -335,6 +410,38 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
     }
   };
 
+  const handleStatisticsFilter = async (data: StatisticsFilters) => {
+    setIsSubmitting(true);
+    setFilterError(null);
+    var call = "";
+    if (activeAction?.action === "viewPatientIncome") {
+      call = "patient-income";
+    }
+    if (activeAction?.action === "viewExamIncome") {
+      call = "exam-income";
+    }
+    if (activeAction?.action === "viewCategoryIncome") {
+      call = "category-income";
+    }
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get<ΙncomeRecord[]>(
+        `http://localhost:8081/api/stats/${call}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+      setIncomeRecords(response.data);
+    } catch (err) {
+      if (!handleError(err, setFilterError)()) {
+        console.error("Error filtering statistics:", err);
+        setFilterError("Failed to fetch statistics.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleExamCreate = async (data: any) => {
     setIsSubmitting(true);
     setCreateError(null);
@@ -505,6 +612,56 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
         />
       );
     }
+    if (
+      activeAction.type === "Statistics" &&
+      (activeAction.action === "viewPatientIncome" ||
+        activeAction.action === "viewExamIncome" ||
+        activeAction.action === "viewCategoryIncome")
+    ) {
+      return (
+        <div>
+          <StatisticsFilter
+            onSubmit={handleStatisticsFilter}
+            onCancel={() => setActiveAction(null)}
+            isLoading={isSubmitting}
+            errorMessage={filterError}
+            maxLimit={
+              localStorage.getItem("max")
+                ? parseInt(localStorage.getItem("max")!)
+                : 0
+            }
+            type={
+              activeAction.action === "viewPatientIncome"
+                ? "patient"
+                : activeAction.action === "viewExamIncome"
+                  ? "exam"
+                  : "category"
+            }
+          />
+          <div style={{ marginTop: "2rem" }}>
+            <h2 style={{ marginBottom: "1rem" }}>Statistics List</h2>
+            {isSubmitting && <p>Loading statistics...</p>}
+            {filterError && (
+              <p style={{ color: "#e53e3e" }}>
+                Please check the filter criteria.
+              </p>
+            )}
+            {!isSubmitting && !filterError && (
+              <StatisticsTable
+                statistics={incomeRecords}
+                type={
+                  activeAction.action === "viewPatientIncome"
+                    ? "patient"
+                    : activeAction.action === "viewExamIncome"
+                      ? "exam"
+                      : "category"
+                }
+              />
+            )}
+          </div>
+        </div>
+      );
+    }
   };
 
   return (
@@ -528,6 +685,15 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
               }
               onDelete={(type) =>
                 setActiveAction({ type: type, action: "delete" })
+              }
+              onViewPatientIncome={(type) =>
+                setActiveAction({ type: type, action: "viewPatientIncome" })
+              }
+              onViewExamIncome={(type) =>
+                setActiveAction({ type: type, action: "viewExamIncome" })
+              }
+              onViewCategoryIncome={(type) =>
+                setActiveAction({ type: type, action: "viewCategoryIncome" })
               }
             />
           </div>
