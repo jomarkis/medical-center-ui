@@ -38,10 +38,21 @@ import AppointmentFilter, {
 } from "../../components/Filters/AppointmentFilter";
 import type { AppointmentRecord } from "../../components/Tables/AppointmentsTable";
 import AppointmentsTable from "../../components/Tables/AppointmentsTable";
+import CreateAppointmentMenu, {
+  type CreateAppointmentData,
+} from "../../components/CreateMenus/CreateAppointmentMenu";
+import DeleteAppointmentMenu, {
+  type DeleteAppointmentData,
+} from "../../components/DeleteAppointmentMenu";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
   action: "view" | "create" | "delete";
+}
+
+interface SuccessDeleteMessage {
+  status: string;
+  message: string;
 }
 //
 function AdminPage({ onLogout }: { onLogout: () => void }) {
@@ -61,6 +72,10 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [exams, setExams] = useState<ExamRecord[]>([]);
 
   const [appointments, setAppointments] = useState<AppointmentRecord[]>([]);
+
+  const [successDeleteMessage, setSuccessDeleteMessage] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (activeAction?.type === "Patients" && activeAction?.action === "view") {
@@ -205,6 +220,64 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       if (!handleError(err, setCreateError)()) {
         console.error("Error creating doctor:", err);
         setCreateError("Failed to create doctor. Please check the details.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCreateAppointment = async (data: CreateAppointmentData) => {
+    setIsSubmitting(true);
+    setCreateError(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:8081/api/appointments",
+        {
+          patientID: data.patientID,
+          examID: data.examID,
+          appointmentDate: data.date,
+          fastResults: data.fastResults,
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+
+      setActiveAction({ type: "Appointments", action: "view" });
+    } catch (err) {
+      if (!handleError(err, setCreateError)()) {
+        console.error("Error creating appointment:", err);
+        setCreateError(
+          "Failed to create appointment. Please check the details.",
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAppointment = async (data: DeleteAppointmentData) => {
+    setIsSubmitting(true);
+    setCreateError(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete<SuccessDeleteMessage>(
+        `http://localhost:8081/api/appointments/delete/${data.appointmentID}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+      // Success Message from Backend
+      setSuccessDeleteMessage(response.data.message);
+    } catch (err) {
+      if (!handleError(err, setCreateError)()) {
+        console.error("Error creating appointment:", err);
+        setCreateError(
+          "Failed to create appointment. Please check the details.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -403,6 +476,33 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             )}
           </div>
         </div>
+      );
+    }
+    if (
+      activeAction.type === "Appointments" &&
+      activeAction.action === "create"
+    ) {
+      return (
+        <CreateAppointmentMenu
+          onSubmit={handleCreateAppointment}
+          onCancel={() => setActiveAction(null)}
+          isLoading={isSubmitting}
+          errorMessage={createError}
+        />
+      );
+    }
+    if (
+      activeAction.type === "Appointments" &&
+      activeAction.action === "delete"
+    ) {
+      return (
+        <DeleteAppointmentMenu
+          onSubmit={handleDeleteAppointment}
+          onCancel={() => setActiveAction(null)}
+          isLoading={isSubmitting}
+          errorMessage={createError}
+          successMessage={successDeleteMessage}
+        />
       );
     }
   };

@@ -93,12 +93,12 @@ export default function AppointmentFilter({
           />
         </div>
         <div className="form-group">
-          {BasicDatePicker(
-            "Appointment Date",
-            formData.date,
-            handleDateChange as () => void,
-            "YYYY-MM-DD",
-          )}
+          <BasicDatePicker
+            label="Appointment Date"
+            value={formData.date ?? ""}
+            onChange={handleDateChange}
+            format="YYYY-MM-DD"
+          />
         </div>
         <div className="form-actions">
           <button
