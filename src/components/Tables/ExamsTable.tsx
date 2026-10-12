@@ -33,7 +33,6 @@ const renderExamRow = (exam: ExamRecord) => {
         <td className="align-left">{imagingExam.examCategory}</td>
         <td className="align-left">{imagingExam.maxSlotsPerDay}</td>
         <td className="align-left">{imagingExam.cost}</td>
-        <td className="align-left">{imagingExam.examType}</td>
         <td className="align-left">
           {"Machine Type: " + imagingExam.machineType}
         </td>
@@ -52,7 +51,6 @@ const renderExamRow = (exam: ExamRecord) => {
         <td className="align-left">{microbiologicalExam.examCategory}</td>
         <td className="align-left">{microbiologicalExam.maxSlotsPerDay}</td>
         <td className="align-left">{microbiologicalExam.cost}</td>
-        <td className="align-left">{microbiologicalExam.examType}</td>
         <td className="align-left">
           {"Sample Type: " + microbiologicalExam.sampleType}
         </td>
@@ -69,7 +67,6 @@ const renderExamRow = (exam: ExamRecord) => {
         <td className="align-left">{specializedExam.examCategory}</td>
         <td className="align-left">{specializedExam.maxSlotsPerDay}</td>
         <td className="align-left">{specializedExam.cost}</td>
-        <td className="align-left">{specializedExam.examType}</td>
         <td className="align-left">
           {"Specialty: " + specializedExam.examSpecialty}
         </td>
@@ -94,7 +91,6 @@ export default function ExamsTable({ exams }: ExamTableProps) {
             <th className="align-left">Exam Category</th>
             <th className="align-left">Max Slots Per Day</th>
             <th className="align-left">Cost</th>
-            <th className="align-left">Exam Type</th>
             <th className="align-left">Additional Info</th>
             <th className="align-right">Doctor ID</th>
           </tr>

@@ -7,7 +7,6 @@ export interface CreateExamData {
   maxSlotsPerDay: number;
   cost: number;
   doctorID: number;
-  examType: string;
 }
 
 export interface CreateIMAGINGExamData extends CreateExamData {
@@ -37,11 +36,10 @@ export default function CreateExamMenu({
 }: CreateExamMenuProps) {
   const [formData, setFormData] = useState<CreateExamData>({
     examName: "",
-    examCategory: "",
+    examCategory: "IMAGING",
     maxSlotsPerDay: 0,
     cost: 0,
     doctorID: 0,
-    examType: "IMAGING",
   });
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -62,8 +60,7 @@ export default function CreateExamMenu({
       !formData.examCategory.trim() ||
       !formData.maxSlotsPerDay.toString().trim() ||
       formData.cost <= 0 ||
-      formData.doctorID <= 0 ||
-      !formData.examType.trim()
+      formData.doctorID <= 0
     ) {
       setValidationError("Please fill in all fields.");
       return;
@@ -80,13 +77,13 @@ export default function CreateExamMenu({
     const { value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      examType: value,
+      examCategory: value,
     }));
     setActiveType(value);
   };
 
   const renderTypeExtraForm = () => {
-    if (formData.examType === "IMAGING") {
+    if (formData.examCategory === "IMAGING") {
       return (
         <div className="form-group">
           <label htmlFor="machineType">Machine Type</label>
@@ -102,7 +99,7 @@ export default function CreateExamMenu({
         </div>
       );
     }
-    if (formData.examType === "MICROBIOLOGICAL") {
+    if (formData.examCategory === "MICROBIOLOGICAL") {
       return (
         <div className="form-group">
           <label htmlFor="sampleType">Sample Type</label>
@@ -118,7 +115,7 @@ export default function CreateExamMenu({
         </div>
       );
     }
-    if (formData.examType === "SPECIALIZED") {
+    if (formData.examCategory === "SPECIALIZED") {
       return (
         <div className="form-group">
           <label htmlFor="examSpecialty">Exam Specialty</label>
@@ -151,19 +148,6 @@ export default function CreateExamMenu({
             name="examName"
             placeholder="e.g. John's Blood Test"
             value={formData.examName}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="examCategory">Exam Category</label>
-          <input
-            type="text"
-            id="examCategory"
-            name="examCategory"
-            placeholder="e.g. Kid's Blood Test"
-            value={formData.examCategory}
             onChange={handleChange}
             disabled={isLoading}
           />
@@ -209,10 +193,10 @@ export default function CreateExamMenu({
         </div>
 
         <div className="form-group">
-          <label htmlFor="examType">Exam Type</label>
+          <label htmlFor="examCategory">Exam Category</label>
           <select
-            id="examType"
-            name="examType"
+            id="examCategory"
+            name="examCategory"
             className="form-select"
             defaultValue=""
             onChange={handleTypeChange}

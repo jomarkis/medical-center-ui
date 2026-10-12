@@ -7,7 +7,7 @@ import type {
   DoctorLoginRequest,
   PatientLoginRequest,
   LoginResponse,
-} from '../../types/auth';
+} from "../../types/auth";
 
 interface Login2Props {
   role: "PATIENT" | "DOCTOR" | "ADMIN";
@@ -72,7 +72,9 @@ function Login2({ role, onBack, onSumbitSuccess }: Login2Props) {
       onSumbitSuccess();
     } catch (err: any) {
       if (err.response && err.response.data) {
-        setLoginMessage(err.response.data.message || "Failed to login. Please try again.");
+        setLoginMessage(
+          err.response.data.message || "Failed to login. Please try again.",
+        );
       } else {
         setLoginMessage("No response from server.");
       }

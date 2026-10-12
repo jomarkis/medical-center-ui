@@ -469,7 +469,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           maxSlotsPerDay: data.maxSlotsPerDay,
           cost: data.cost,
           doctorID: data.doctorID,
-          examType: data.examType,
+          examType: data.examCategory,
           sampleType: (data as CreateMICROBIOLOGICALExamData).sampleType,
           examSpecialty: (data as CreateSPECIALIZEDExamData).examSpecialty,
           machineType: (data as CreateIMAGINGExamData).machineType,
@@ -684,11 +684,21 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             <h1>Admin Dashboard</h1>
             <ActionList
               items={[
-                { type: "Patients" },
-                { type: "Doctors" },
-                { type: "Exams" },
-                { type: "Appointments" },
-                { type: "Statistics" },
+                { type: "Patients", hasView: true, hasCreate: true },
+                { type: "Doctors", hasView: true, hasCreate: true },
+                { type: "Exams", hasView: true, hasCreate: true },
+                {
+                  type: "Appointments",
+                  hasView: true,
+                  hasCreate: true,
+                  hasDelete: true,
+                },
+                {
+                  type: "Statistics",
+                  hasViewIncome: true,
+                  hasViewExamIncome: true,
+                  hasViewCategoryIncome: true,
+                },
               ]}
               onView={(type) => setActiveAction({ type: type, action: "view" })}
               onCreate={(type) =>

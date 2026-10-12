@@ -10,6 +10,13 @@ export type ActionType =
 
 export interface ActionListItem {
   type: ActionType;
+
+  hasView?: boolean;
+  hasCreate?: boolean;
+  hasDelete?: boolean;
+  hasViewIncome?: boolean;
+  hasViewExamIncome?: boolean;
+  hasViewCategoryIncome?: boolean;
 }
 
 interface listAction {
@@ -19,6 +26,7 @@ interface listAction {
 
 interface ActionListProps {
   items: ActionListItem[];
+
   onView?: (type: ActionType) => void;
   onCreate?: (type: ActionType) => void;
   onDelete?: (type: ActionType) => void;
@@ -85,7 +93,7 @@ export default function ActionList({
 
               {openMenuId === item.type && (
                 <div className="action-dropdown">
-                  {item.type !== "Statistics" && (
+                  {item.type !== "Statistics" && item.hasView && (
                     <button
                       className="dropdown-item"
                       onClick={() => {
@@ -97,7 +105,7 @@ export default function ActionList({
                     </button>
                   )}
 
-                  {item.type !== "Statistics" && (
+                  {item.type !== "Statistics" && item.hasCreate && (
                     <button
                       className="dropdown-item"
                       onClick={() => {
@@ -110,7 +118,7 @@ export default function ActionList({
                   )}
 
                   {/* Εμφάνιση Delete μόνο στα appointments */}
-                  {item.type === "Appointments" && (
+                  {item.type === "Appointments" && item.hasDelete && (
                     <button
                       className="dropdown-item delete"
                       onClick={() => {
@@ -121,7 +129,7 @@ export default function ActionList({
                       Delete
                     </button>
                   )}
-                  {item.type === "Statistics" && (
+                  {item.type === "Statistics" && item.hasViewIncome && (
                     <button
                       className="dropdown-item item"
                       onClick={() => {
@@ -132,7 +140,7 @@ export default function ActionList({
                       View Income Per Patient
                     </button>
                   )}
-                  {item.type === "Statistics" && (
+                  {item.type === "Statistics" && item.hasViewExamIncome && (
                     <button
                       className="dropdown-item"
                       onClick={() => {
@@ -143,7 +151,7 @@ export default function ActionList({
                       View Income Per Exam
                     </button>
                   )}
-                  {item.type === "Statistics" && (
+                  {item.type === "Statistics" && item.hasViewCategoryIncome && (
                     <button
                       className="dropdown-item"
                       onClick={() => {
