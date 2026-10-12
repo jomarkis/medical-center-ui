@@ -45,10 +45,11 @@ import DeleteAppointmentMenu, {
   type DeleteAppointmentData,
 } from "../../components/DeleteAppointmentMenu";
 import StatisticsTable, {
-  type ΙncomeRecord,
+  type IncomeRecord,
 } from "../../components/Tables/StatisticsTable";
 import type { StatisticsFilters } from "../../components/Filters/StatisticsFilter";
 import StatisticsFilter from "../../components/Filters/StatisticsFilter";
+import IncomeTable from "../../components/Tables/StatisticsTable";
 
 interface listAction {
   type: "Doctors" | "Patients" | "Appointments" | "Exams" | "Statistics";
@@ -84,7 +85,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 
   const [appointments, setAppointments] = useState<AppointmentRecord[]>([]);
 
-  const [incomeRecords, setIncomeRecords] = useState<ΙncomeRecord[]>([]);
+  const [incomeRecords, setIncomeRecords] = useState<IncomeRecord[]>([]);
 
   const [successDeleteMessage, setSuccessDeleteMessage] = useState<
     string | null
@@ -189,39 +190,46 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
         activeAction.action === "viewExamIncome" ||
         activeAction.action === "viewCategoryIncome")
     ) {
-      const loadAllPatientStatistics = async () => {
-        var call = "";
-        if (activeAction?.action === "viewPatientIncome") {
-          call = "patient-income";
-        }
-        if (activeAction?.action === "viewExamIncome") {
-          call = "exam-income";
-        }
-        if (activeAction?.action === "viewCategoryIncome") {
-          call = "category-income";
-        }
+      const loadAllStatistics = async () => {
+        setIsSubmitting(true);
+        setFilterError(null);
+
+        let endpoint = "";
+        if (activeAction.action === "viewPatientIncome")
+          endpoint = "patient-income";
+        if (activeAction.action === "viewExamIncome") endpoint = "exam-income";
+        if (activeAction.action === "viewCategoryIncome")
+          endpoint = "exam-category-income";
+
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.get<ΙncomeRecord[]>(
-            `http://localhost:8081/api/stats/${call}`,
+          const response = await axios.get<IncomeRecord[]>(
+            `http://localhost:8081/api/stats/${endpoint}`,
             {
               headers: token ? { Authorization: `Bearer ${token}` } : {},
             },
           );
+
+          // Αποθήκευση του μέγιστου εισοδήματος για το max limit του RangeSlider
           if (response.data.length > 0) {
             localStorage.setItem(
               "max",
               response.data[0].totalIncome.toString(),
             );
           }
+
           setIncomeRecords(response.data);
         } catch (err) {
-          if (!handleError(err, setError)()) {
+          if (!handleError(err, setFilterError)()) {
             console.error("Error loading statistics:", err);
+            setFilterError("Failed to load statistics.");
           }
+        } finally {
+          setIsSubmitting(false);
         }
       };
-      loadAllPatientStatistics();
+
+      loadAllStatistics();
     }
   }, [activeAction]);
 
@@ -413,21 +421,26 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
   const handleStatisticsFilter = async (data: StatisticsFilters) => {
     setIsSubmitting(true);
     setFilterError(null);
-    var call = "";
-    if (activeAction?.action === "viewPatientIncome") {
-      call = "patient-income";
-    }
-    if (activeAction?.action === "viewExamIncome") {
-      call = "exam-income";
-    }
-    if (activeAction?.action === "viewCategoryIncome") {
-      call = "category-income";
-    }
+
+    let endpoint = "";
+    if (activeAction?.action === "viewPatientIncome")
+      endpoint = "patient-income";
+    if (activeAction?.action === "viewExamIncome") endpoint = "exam-income";
+    if (activeAction?.action === "viewCategoryIncome")
+      endpoint = "exam-category-income";
+
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get<ΙncomeRecord[]>(
-        `http://localhost:8081/api/stats/${call}`,
+      const response = await axios.get<IncomeRecord[]>(
+        `http://localhost:8081/api/stats/${endpoint}`,
         {
+          params: {
+            patientID: data.patientID,
+            examID: data.examID,
+            category: data.category,
+            minIncome: data.minIncome,
+            maxIncome: data.maxIncome,
+          },
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
@@ -618,6 +631,8 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
         activeAction.action === "viewExamIncome" ||
         activeAction.action === "viewCategoryIncome")
     ) {
+      const storedMax = localStorage.getItem("max");
+      const maxLimit = storedMax ? parseInt(storedMax, 10) + 1 : 0;
       return (
         <div>
           <StatisticsFilter
@@ -625,11 +640,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             onCancel={() => setActiveAction(null)}
             isLoading={isSubmitting}
             errorMessage={filterError}
-            maxLimit={
-              localStorage.getItem("max")
-                ? parseInt(localStorage.getItem("max")!)
-                : 0
-            }
+            maxLimit={maxLimit}
             type={
               activeAction.action === "viewPatientIncome"
                 ? "patient"
@@ -647,7 +658,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
               </p>
             )}
             {!isSubmitting && !filterError && (
-              <StatisticsTable
+              <IncomeTable
                 statistics={incomeRecords}
                 type={
                   activeAction.action === "viewPatientIncome"

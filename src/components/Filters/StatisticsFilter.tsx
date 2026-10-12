@@ -3,7 +3,9 @@ import "../CreateMenus/CreateMenu.css";
 import RangeSlider from "../RangeSlider";
 
 export interface StatisticsFilters {
-  per: number | string | null;
+  patientID?: number | null;
+  examID?: number | null;
+  category?: string | null;
   minIncome: number | null;
   maxIncome: number | null;
 }
@@ -25,34 +27,24 @@ export default function StatisticsFilter({
   maxLimit,
   type,
 }: StatisticsFilterProps) {
-  const [formData, setFormData] = useState<StatisticsFilters>({
-    per: null,
-    minIncome: null,
-    maxIncome: null,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value === "" ? null : Number(value),
-    }));
-  };
-
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      per: value,
-    }));
-  };
+  const [patientID, setPatientID] = useState<number | null>(null);
+  const [examID, setExamID] = useState<number | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
+  const [incomeRange, setIncomeRange] = useState<number[]>([0, maxLimit]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    onSubmit({
+      patientID: type === "patient" ? patientID : undefined,
+      examID: type === "exam" ? examID : undefined,
+      category: type === "category" ? category : undefined,
+      minIncome: incomeRange[0],
+      maxIncome: incomeRange[1],
+    });
   };
 
-  const renderLabel = () => {
+  const renderIdentifierInput = () => {
     switch (type) {
       case "patient":
         return (
@@ -61,14 +53,18 @@ export default function StatisticsFilter({
             <input
               type="number"
               id="patientID"
-              name="per"
               placeholder="e.g. 1"
-              value={formData.per ?? ""}
-              onChange={handleChange}
+              value={patientID ?? ""}
+              onChange={(e) =>
+                setPatientID(
+                  e.target.value === "" ? null : Number(e.target.value),
+                )
+              }
               disabled={isLoading}
             />
           </div>
         );
+
       case "exam":
         return (
           <div className="form-group">
@@ -76,28 +72,28 @@ export default function StatisticsFilter({
             <input
               type="number"
               id="examID"
-              name="per"
               placeholder="e.g. 1"
-              value={formData.per ?? ""}
-              onChange={handleChange}
+              value={examID ?? ""}
+              onChange={(e) =>
+                setExamID(e.target.value === "" ? null : Number(e.target.value))
+              }
               disabled={isLoading}
             />
           </div>
         );
+
       case "category":
         return (
           <div className="form-group">
-            <label htmlFor="examType">Exam Type</label>
+            <label htmlFor="category">Exam Category</label>
             <select
-              id="examType"
-              name="examType"
+              id="category"
               className="form-select"
-              defaultValue=""
-              onChange={handleTypeChange}
+              value={category ?? ""}
+              onChange={(e) => setCategory(e.target.value || null)}
+              disabled={isLoading}
             >
-              <option value="" disabled>
-                Select type
-              </option>
+              <option value="">All Categories</option>
               <option value="IMAGING">IMAGING</option>
               <option value="MICROBIOLOGICAL">MICROBIOLOGICAL</option>
               <option value="SPECIALIZED">SPECIALIZED</option>
@@ -116,22 +112,18 @@ export default function StatisticsFilter({
       {errorMessage && <div className="form-alert error">{errorMessage}</div>}
 
       <form onSubmit={handleSubmit} className="create-form">
-        {renderLabel()}
+        {renderIdentifierInput()}
+
         <div className="form-group">
           <RangeSlider
             label="Income"
             min={0}
             max={maxLimit}
-            value={[formData.minIncome || 0, formData.maxIncome || maxLimit]}
-            onChange={(newValue) => {
-              setFormData((prev) => ({
-                ...prev,
-                minIncome: newValue[0],
-                maxIncome: newValue[1],
-              }));
-            }}
+            value={incomeRange}
+            onChange={(newValue) => setIncomeRange(newValue)}
           />
         </div>
+
         <div className="form-actions">
           <button
             type="button"

@@ -1,51 +1,52 @@
 import React from "react";
 import "./Table.css";
 
-export interface ΙncomeRecord {
-  per: number | string;
+export interface IncomeRecord {
+  patientID?: number;
+  examID?: number;
+  category?: string;
   totalIncome: number;
   totalAppointments: number;
 }
 
 interface IncomeTableProps {
-  statistics: ΙncomeRecord[];
+  statistics: IncomeRecord[];
   type: "patient" | "exam" | "category";
 }
 
-const renderTableHeader = (type: "patient" | "exam" | "category") => {
-  switch (type) {
-    case "patient":
-      return (
-        <tr>
-          <th className="align-left">Patient ID</th>
-          <th className="align-left">Patient's Total Income</th>
-          <th className="align-left">Patient's Total Appointments</th>
-        </tr>
-      );
-    case "exam":
-      return (
-        <tr>
-          <th className="align-left">Exam ID</th>
-          <th className="align-left">Exam's Total Income</th>
-          <th className="align-left">Exam's Total Appointments</th>
-        </tr>
-      );
-    case "category":
-      return (
-        <tr>
-          <th className="align-left">Exam Category</th>
-          <th className="align-left">Category's Total Income</th>
-          <th className="align-right">Category Total Appointments</th>
-        </tr>
-      );
-  }
-};
-
 export default function IncomeTable({ statistics, type }: IncomeTableProps) {
+  const getIdentifierHeader = () => {
+    switch (type) {
+      case "patient":
+        return "Patient ID";
+      case "exam":
+        return "Exam ID";
+      case "category":
+        return "Category";
+    }
+  };
+
+  const getIdentifierValue = (stat: IncomeRecord) => {
+    switch (type) {
+      case "patient":
+        return stat.patientID ?? "-";
+      case "exam":
+        return stat.examID ?? "-";
+      case "category":
+        return stat.category ?? "-";
+    }
+  };
+
   return (
     <div className="table-wrapper">
       <table className="custom-dark-table">
-        <thead>{renderTableHeader(type)}</thead>
+        <thead>
+          <tr>
+            <th className="align-left">{getIdentifierHeader()}</th>
+            <th className="align-left">Total Income (€)</th>
+            <th className="align-left">Total Appointments</th>
+          </tr>
+        </thead>
         <tbody>
           {statistics.length === 0 ? (
             <tr>
@@ -54,11 +55,11 @@ export default function IncomeTable({ statistics, type }: IncomeTableProps) {
               </td>
             </tr>
           ) : (
-            statistics.map((stat) => (
-              <tr key={stat.per}>
-                <td className="patient-id-cell align-left">{stat.per}</td>
+            statistics.map((stat, idx) => (
+              <tr key={idx}>
+                <td className="align-left">{getIdentifierValue(stat)}</td>
                 <td className="align-left">{stat.totalIncome}</td>
-                <td className="align-right">{stat.totalAppointments}</td>
+                <td className="align-left">{stat.totalAppointments}</td>
               </tr>
             ))
           )}
