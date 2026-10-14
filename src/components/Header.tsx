@@ -1,14 +1,14 @@
-import React from 'react';
-import './Header.css'; // Τοπικό CSS του component
-import logo from '../assets/logo.png'; // Εισαγωγή του λογοτύπου από τα assets
+import React from "react";
+import "./Header.css";
+import logo from "../assets/logo.png";
 
 interface HeaderProps {
-  roleTitle: 'Admin' | 'Doctor' | 'Patient';
+  roleTitle: "Admin" | "Doctor" | "Patient";
   onLogout: () => void;
   themeColor?: string;
 }
 
-function Header({ roleTitle, onLogout, themeColor = '#e53e3e' }: HeaderProps) {
+function Header({ roleTitle, onLogout, themeColor = "#e53e3e" }: HeaderProps) {
   return (
     <header className="app-header" style={{ backgroundColor: themeColor }}>
       <div className="header-brand">

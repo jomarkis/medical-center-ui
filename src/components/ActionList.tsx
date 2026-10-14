@@ -48,7 +48,6 @@ export default function ActionList({
   const [openMenuId, setOpenMenuId] = useState<string | number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Κλείνει το μενού αν κάνεις κλικ οπουδήποτε εκτός
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (listRef.current && !listRef.current.contains(event.target as Node)) {
@@ -70,7 +69,6 @@ export default function ActionList({
           <li key={item.type} className="action-list-row">
             <span className="action-item-label">{item.type}</span>
 
-            {/* Περιοχή κουμπιού ενεργειών & dropdown */}
             <div className="action-menu-container">
               <button
                 type="button"
@@ -78,7 +76,6 @@ export default function ActionList({
                 onClick={() => toggleMenu(item.type)}
                 aria-label="More actions"
               >
-                {/* Εικονίδιο 3 κουκκίδων */}
                 <svg
                   width="20"
                   height="20"
@@ -117,7 +114,6 @@ export default function ActionList({
                     </button>
                   )}
 
-                  {/* Εμφάνιση Delete μόνο στα appointments */}
                   {item.type === "Appointments" && item.hasDelete && (
                     <button
                       className="dropdown-item delete"

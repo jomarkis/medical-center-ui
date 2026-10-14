@@ -58,16 +58,13 @@ function Login2({ role, onBack, onSumbitSuccess }: Login2Props) {
         payload,
       );
 
-      // Πλήρης υποστήριξη autocomplete & type safety:
       const { token, role, identifier } = response.data;
       console.log(`Συνδέθηκε ο ρόλος: ${role} με ID: ${identifier}`);
 
-      // Αποθήκευση στο localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userId", identifier.toString());
 
-      // Ενημέρωση του App component
       setLoginMessage("Successful login!");
       onSumbitSuccess();
     } catch (err: any) {
@@ -84,18 +81,15 @@ function Login2({ role, onBack, onSumbitSuccess }: Login2Props) {
   return (
     <div className="login-container">
       <div className="login-card">
-        {/* Κουμπί επιστροφής */}
         <div style={{ textAlign: "left", marginBottom: "0.8rem" }}>
           <button type="button" onClick={onBack} className="btn-back">
             ← Back
           </button>
         </div>
 
-        {/* Δυναμικός χαιρετισμός */}
         <h2 className="login-title">Hello dear {role}!</h2>
         <p className="login-subtitle">Please enter your credentials below</p>
 
-        {/* Φόρμα με onSubmit */}
         <form onSubmit={handleSubmit} className="role-buttons">
           <div style={{ textAlign: "left" }}>
             <label
@@ -134,7 +128,6 @@ function Login2({ role, onBack, onSumbitSuccess }: Login2Props) {
           >
             Login
           </button>
-          {/* Μήνυμα σφάλματος κάτω από το κουμπί */}
           {loginMessage && (
             <p
               style={{

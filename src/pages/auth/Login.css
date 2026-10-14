@@ -43,7 +43,6 @@
   color: #718096;
 }
 
-/* Τα κουμπιά επιλογής */
 .role-buttons {
   display: flex;
   flex-direction: column;

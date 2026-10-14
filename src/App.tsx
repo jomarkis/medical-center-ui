@@ -31,18 +31,53 @@ function App() {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        // Ελέγχουμε απευθείας αν ο χρήστης βρίσκεται ήδη μέσα σε σελίδα
-        if (error.response?.status === 401 && activeRole !== null) {
+        if (
+          (error.response?.status === 401 || error.response?.status === 403) &&
+          activeRole !== null
+        ) {
           handleLogout();
         }
         return Promise.reject(error);
       },
     );
 
-    // Καθαρισμός και επανασύνδεση του interceptor όταν αλλάζει το activeRole
     return () => {
       axios.interceptors.response.eject(interceptor);
     };
+  }, [activeRole]);
+
+  useEffect(() => {
+    if (!activeRole) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      handleLogout();
+      return;
+    }
+
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const payload = JSON.parse(window.atob(base64));
+
+      if (!payload.exp) return;
+
+      const expirationTimeMs = payload.exp * 1000;
+      const timeRemaining = expirationTimeMs - Date.now();
+
+      if (timeRemaining <= 0) {
+        handleLogout();
+      } else {
+        const timer = setTimeout(() => {
+          handleLogout();
+        }, timeRemaining);
+
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {
+      console.error("Failed to parse token expiration:", e);
+      handleLogout();
+    }
   }, [activeRole]);
 
   if (activeRole === "ROLE_ADMIN") {

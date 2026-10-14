@@ -66,7 +66,7 @@ interface SuccessDeleteMessage {
   status: string;
   message: string;
 }
-//
+
 function AdminPage({ onLogout }: { onLogout: () => void }) {
   const [activeAction, setActiveAction] = useState<listAction | null>(null);
 
@@ -143,6 +143,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       fetchDoctors();
     }
     if (activeAction?.type === "Exams" && activeAction?.action === "view") {
+      setFilterError(null);
       const loadAllExams = async () => {
         try {
           const token = localStorage.getItem("token");
@@ -166,6 +167,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
       activeAction?.type === "Appointments" &&
       activeAction?.action === "view"
     ) {
+      setFilterError(null);
       const loadAllAppointments = async () => {
         try {
           const token = localStorage.getItem("token");
@@ -210,7 +212,6 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             },
           );
 
-          // Αποθήκευση του μέγιστου εισοδήματος για το max limit του RangeSlider
           if (response.data.length > 0) {
             localStorage.setItem(
               "max",
@@ -353,7 +354,6 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
-      // Success Message from Backend
       setSuccessDeleteMessage(response.data.message);
     } catch (err) {
       if (!handleError(err, setCreateError)()) {
@@ -741,6 +741,3 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
 }
 
 export default AdminPage;
-//
-
-//

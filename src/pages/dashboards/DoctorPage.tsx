@@ -170,5 +170,3 @@ function DoctorPage({ onLogout }: { onLogout: () => void }) {
 }
 
 export default DoctorPage;
-
-//

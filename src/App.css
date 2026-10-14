@@ -183,7 +183,6 @@
   }
 }
 
-/* Βασικό στυλ για το Logout button */
 .btn-logout {
   background-color: #fff5f5;
   color: #e53e3e;
@@ -199,7 +198,6 @@
   gap: 0.4rem;
 }
 
-/* Hover state: απαλό κοκκίνισμα */
 .btn-logout:hover {
   background-color: #e53e3e;
   color: #ffffff;
@@ -210,13 +208,11 @@
   transform: translateY(-1px);
 }
 
-/* Active click state */
 .btn-logout:active {
   transform: translateY(0);
   box-shadow: none;
 }
 
-/* Προαιρετικό: Container για τοποθέτηση πάνω δεξιά στην οθόνη (Header) */
 .dashboard-header {
   display: flex;
   justify-content: space-between;

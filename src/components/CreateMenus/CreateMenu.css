@@ -165,7 +165,6 @@
   margin-top: 1.2rem;
 }
 
-/* Label του checkbox */
 .form-group-checkbox label {
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -173,11 +172,10 @@
   color: #333;
 }
 
-/* Το κουτάκι (checkbox) - μεγαλύτερο μέγεθος */
 .checkbox-input {
   width: 24px;
   height: 24px;
   cursor: pointer;
-  accent-color: #b80000; /* Το χρώμα του tick όταν επιλέγεται */
+  accent-color: #b80000;
   margin: 0;
 }
