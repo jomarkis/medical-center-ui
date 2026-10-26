@@ -402,7 +402,7 @@ function AdminPage({ onLogout }: { onLogout: () => void }) {
             examID: data.examID || null,
             patientID: data.patientID || null,
             doctorID: data.doctorID || null,
-            appointmentDate: data.date || null,
+            date: data.date || null,
           },
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
